@@ -1,0 +1,7 @@
+numpy
+opencv-python
+PyYaml
+rosbag
+gnupg
+pycryptodomex
+rospkg
