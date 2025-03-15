@@ -1,6 +1,6 @@
 import os
 import cv2
-import numpy as np
+from tqdm import tqdm
 import rosbag
 import argparse
 from cv_bridge import CvBridge
@@ -28,6 +28,8 @@ def main(opt):
     
     # Load the Rosbag
     bag = rosbag.Bag(path)
+    # Extract information from bag
+    type_and_topic_info = bag.get_type_and_topic_info()
 
     # Generate dir to save output
     save_path = os.path.join(output_dir, bag_name_without_extension)
@@ -41,8 +43,12 @@ def main(opt):
             print(topic_path)
             os.makedirs(topic_path, exist_ok=True)
 
+        # Get the number of messages for the current topic to set up tqdm
+        topic_info = type_and_topic_info.topics[topic]
+        num_messages = topic_info.message_count
+
         # Iterate on the bag
-        for i, (topic, msg, t) in enumerate(bag.read_messages(topics=topic)):
+        for i, (topic, msg, t) in tqdm(enumerate(bag.read_messages(topics=[topic])), total=num_messages, desc=f"Processing {topic}", unit="msg"):
             message_type = type(msg).__name__ # Get the message type name as a string
 
             if message_type == "_sensor_msgs__Image":

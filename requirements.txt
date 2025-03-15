@@ -5,3 +5,4 @@ rosbag
 gnupg
 pycryptodomex
 rospkg
+tqdm
